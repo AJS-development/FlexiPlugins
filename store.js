@@ -1,15 +1,18 @@
 "use strict";
+var fs = require('fs')
 var request = require('request');
 module.exports = class store {
-  constructor(defaultr) {
+  constructor(defaultr,dir) {
     this.repos = [];
     this.default = defaultr
     this.list = [];
     this.compile();
+    this.dir = dir;
   }
   checkifvalid(a) {
     return true
   }
+  
   compile() {
     request(this.default + "/plugins.json",function (error, response, body) {
         if (!error && response.statusCode == 200) {
@@ -27,7 +30,35 @@ module.exports = class store {
         }
     });
     });
-    
+   
+  }
+  downloadfile(a,b) {
+      request(a,function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+          fs.writeFileSync(b,body);
+        }
+      });
+  }
+  add(a) {
+      request(a,function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+        var b = JSON.parse(body);
+        fs.mkdir(this.dir + "/" b.name);
+        var dir = this.dir + "/" b.name;
+          b.files.forEach((file)=>{
+            this.downloadfile(file.link,dir + file.dir)
+          })
+        }
+      })
+  }
+  install(a) {
+    this.list.every((ob)=>{
+      if (ob.title == a && ob.link) {
+        this.add(ob.link);
+        return false;
+      }
+      return true;
+    })
   }
   search(a) {
     var title = [];
