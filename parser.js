@@ -47,6 +47,12 @@ module.exports = class parser() {
     }
     return false;
   }
+  dispMsg(v,file) {
+    var name = (v.pluginData.name) ? v.pluginData.name : file;
+    var author = (v.pluginData.author) ? v.pluginData.author : "Unknown";
+    var version = (v.pluginData.version) ? v.pluginData.version : "1.0.0"
+    console.log("Loaded plugin " + name + " by " + author + " v" + version)
+  }
   prepare() {
     this.plugins = {};
     this.pdata = {};
@@ -66,6 +72,8 @@ module.exports = class parser() {
      v.init(this.data);
      this.getExtra(v);
      this.plugins[files[i]] = v;
+     var g = (v.pluginData.saveAs) ? v.pluginData.saveAs : files[i]
+     this.dispMsg(v,g)
     }
   }
   
