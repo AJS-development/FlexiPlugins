@@ -2,8 +2,8 @@
 var fs = require('fs')
 var request = require('request');
 module.exports = class store {
-  constructor(defaultr,dir) {
-    this.repos = [];
+  constructor(defaultr,dir,repos) {
+    this.repos = repos;
     this.default = defaultr
     this.list = [];
     this.compile();
